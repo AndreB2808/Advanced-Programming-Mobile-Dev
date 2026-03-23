@@ -1,2 +1,5 @@
-Javascript/**       linguist-language=Javascript
-Javascript/**       linguist-detectable=true
+*.js linguist-language=JavaScript
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TSX
+*.html linguist-language=HTML
+*.css linguist-language=CSS
