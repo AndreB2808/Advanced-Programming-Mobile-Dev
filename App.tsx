@@ -65,13 +65,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderWidth: 2,
     borderRadius: 12,
-    backgroundColor: "#fffed0", // parte de dentro branca
+    backgroundColor: "#fffed0",
   },
   textoCard: {
-    fontWeight: "bold", // textos em negrito
+    fontWeight: "bold",
     marginBottom: 5,
   },
   botao: {
-    marginTop: 15, // botão mais abaixo
+    marginTop: 15,
   },
 });
