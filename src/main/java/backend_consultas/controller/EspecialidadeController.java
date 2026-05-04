@@ -8,35 +8,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/especialidades")
 @CrossOrigin
-public class EspecialidadeController {
+    public class EspecialidadeController {
 
-    private final EspecialidadeService service;
+        private final EspecialidadeService service;
 
-    public EspecialidadeController(EspecialidadeService service) {
-        this.service = service;
-    }
+        public EspecialidadeController(EspecialidadeService service) {
+            this.service = service;
+        }
 
-    @PostMapping
-    public Especialidade criar(@RequestBody Especialidade especialidade) {
-        return service.salvar(especialidade);
-    }
+        @PostMapping
+        public Especialidade criar(@RequestBody Especialidade especialidade) {
+            return service.salvar(especialidade);
+        }
 
-    @GetMapping
-    public List<Especialidade> listar() {
-        return service.listar();
-    }
+        @GetMapping
+        public List<Especialidade> listar() {
+            return service.listar();
+        }
 
-    @GetMapping("/{id}")
-    public Especialidade buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id);
-    }
-    @PutMapping("/{id}")
-    public Especialidade atualizar(@PathVariable Long id, @RequestBody Especialidade especialidade) {
-        return service.atualizar(id, especialidade);
-    }
+        @GetMapping("/{id}")
+        public Especialidade buscarPorId(@PathVariable Long id) {
+            return service.buscarPorId(id);
+        }
+        @PutMapping("/{id}")
+        public Especialidade atualizar(@PathVariable Long id, @RequestBody Especialidade especialidade) {
+            return service.atualizar(id, especialidade);
+        }
 
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
-        service.deletar(id);
+        @DeleteMapping("/{id}")
+        public void deletar(@PathVariable Long id) {
+            service.deletar(id);
+        }
     }
-}
