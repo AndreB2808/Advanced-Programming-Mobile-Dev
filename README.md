@@ -28,7 +28,7 @@ Para executar o programa, é necessário possuir o Node.js e o Expo instalado em
 ```
 npm install
 
-#e após finalizar#
+#APÓS A INSTALAÇÃO#
 
 npx expo start
 ```
