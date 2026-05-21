@@ -45,3 +45,7 @@ Clicando na barra de texto é possível inserir uma descrição de algum alerta 
 ![C](images/3.png)
 
 Para fins de simplificação, os dados do alerta criado são aleatoriamente pré-definidos, com apenas a descrição sendo inserida pelo usuário.
+
+Vídeo de demonstração da instalação, inicialização e usagem:
+
+https://github.com/user-attachments/assets/fb63081b-23bb-453a-9889-7876906cfc67
