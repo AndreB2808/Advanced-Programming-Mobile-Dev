@@ -11,6 +11,7 @@ A proposta foi desenvolvida com React Native, Expo, TypeScript e componentes nat
 
 ## 🗂️ Estrutura do Projeto
 ```
+App.tsx
 src/
 ├── components
 │   └── AlertaCard.tsx
