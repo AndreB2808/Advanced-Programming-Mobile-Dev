@@ -1,4 +1,4 @@
-# Challenge Sprint 1 🏫
+# Challenge Sprint 2 🏫
 
 ## 🖥️ Descrição da API e tecnologias
 A API desenvolvida nessa sprint representa o gerenciamento de alertas industriais em um cenário de segurança baseado em visão computacional. A aplicação permite o cadastro, consulta, atualização e remoção de registros de alerta relacionados a situações de risco em ambiente industrial. Por se tratar de uma aplicação básica, apenas a função de alerta está presente, porém em um projeto real teria outras entidades como "Equipamento" e "SensorMovimento" por exemplo.
