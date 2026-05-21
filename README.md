@@ -24,7 +24,7 @@ src/
 ```
 ## ⚙️ Como utilizar 
 
-Para executar o programa, é necessário possuir o Node.js e o Expo instalado em uma IDE compatível (no meu caso utilizei o Visual Studio Code para isso). Para fazer a instalação inicial, basta abrir um terminal novo e digitar:
+Para executar o programa, é necessário possuir o Node.js e o Expo instalado em uma IDE compatível (no meu caso utilizei o Visual Studio Code para isso). Para fazer a instalação inicial, primeiro é necessário fazer a instalação do conteúdo deste repositório. Após ter a pasta do projeto, basta abri-la na IDE escolhida e dentro da mesma abrir um terminal novo e digitar:
 ```
 npm install
 
@@ -32,12 +32,10 @@ npm install
 
 npx expo start
 ```
-Após iniciar o projeto, o Expo abrirá o painel de execução no navegador, permitindo executar o aplicativo no celular através do Expo Go ou em um emulador Android/iOS.
+Após iniciar o projeto, a tecla "w" pode ser pressionada no terminal para o Expo executar o programa no navegador, ou então pode ser acessado diretamente após a execução pelo endereço: http://localhost:8081/
 
-O aplicativo funciona totalmente com estado local e dados mockados, não utilizando integração com backend ou APIs externas nesta sprint.
+O aplicativo funciona totalmente com estado local e dados mockados, não utilizando integração com backend ou APIs externas, mas com capacidade completa de integração futura caso seja necessário.
 
-A aplicação 2 pode ser acessada via navegador pelo endereço:
-http://localhost:8081/
 
 
 Primeiramente
