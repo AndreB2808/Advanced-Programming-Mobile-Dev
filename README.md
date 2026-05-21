@@ -1,62 +1,58 @@
-# Challenge Sprint 2 🏫
+# Challenge Sprint 2 📱
 
-## 🖥️ Descrição da API e tecnologias
-A API desenvolvida nessa sprint representa o gerenciamento de alertas industriais em um cenário de segurança baseado em visão computacional. A aplicação permite o cadastro, consulta, atualização e remoção de registros de alerta relacionados a situações de risco em ambiente industrial. Por se tratar de uma aplicação básica, apenas a função de alerta está presente, porém em um projeto real teria outras entidades como "Equipamento" e "SensorMovimento" por exemplo.
+## 🖥️ Descrição do Frontend
+A aplicação desenvolvida nessa sprint representa um sistema mobile de monitoramento de alertas industriais em um cenário de segurança baseado em visão computacional. O aplicativo foi desenvolvido utilizando React Native com Expo e TypeScript, simulando o funcionamento de um sistema de detecção de riscos em ambiente industrial.
 
-A proposta foi desenvolvida com Spring Boot, Java 17, Spring Web, Spring Data JPA, Maven e banco H2 em modo file, seguindo a arquitetura utilizada nas aula.
+O app permite visualizar alertas industriais, exibir informações relacionadas ao tipo de risco, setor afetado, nível de severidade, funcionários envolvidos e grupos notificados, além de permitir a criação de novos alertas diretamente pela interface utilizando estado local.
+
+Por se tratar de uma aplicação frontend sem integração com backend, os dados utilizados no sistema são mockados através de arrays locais em TypeScript. Alguns dados dos alertas são gerados aleatoriamente, como nível de severidade, setor, tipo de risco e indivíduo sob risco, simulando diferentes situações industriais.
+
+A proposta foi desenvolvida com React Native, Expo, TypeScript e componentes nativos do React Native, seguindo o padrão das aulas.
 
 ## 🗂️ Estrutura do Projeto
 ```
-src/main/java/com/advancedprogramming/mobiledev/
-├── controller
-│   └── AlertaIndustrialController.java
-├── model
-│   └── AlertaIndustrial.java
-├── repository
-│   └── AlertaIndustrialRepository.java
-├── service
-│   └── AlertaIndustrialService.java
-└── Sprint1Application.java
+src/
+├── components
+│   └── AlertaCard.tsx
+├── data
+│   └── Alertas.ts
+├── screens
+│   └── AlertaScreen.tsx
+└── types
+    └── AlertaIndustrial.ts
 ```
 ## ⚙️ Como utilizar 
 
-Para executar a API, é necessário abrir o projeto em uma IDE compatível com Java e Spring Boot (no meu caso utilizei o Visual Studio Code).
-A aplicação pode ser iniciada executando a classe principal `Sprint1Application.java`.
-Após a execuão, a API estará disponível localmente e poderá ser testada utilizando ferramentas como Postman, por meio dos endpoints REST.
-O banco de dados H2 pode ser acessado via navegador pelo endereço:
-http://localhost:8080/h2-console
+Para executar o programa, é necessário possuir o Node.js e o Expo instalado em uma IDE compatível (no meu caso utilizei o Visual Studio Code para isso). Para fazer a instalação inicial, basta abrir um terminal novo e digitar:
+```
+npm install
 
-A configuração de conexão se encontra no arquivo `application.properties`.
+#e após finalizar#
 
-JSON de exemplo:
-  ```
-  {
-    "tipoRisco": "EPI",
-    "descricao": "Funcionário sem máscara anti-toxina",
-    "setor": "PRODUÇÃO",
-    "nivelSeveridade": "ALTO",
-    "dataHora": "2026-04-24 19:32",
-    "resolvido": false,
-    "individuosSobRisco": "João Silva, ID_223",
-    "gruposNotificados": "Equipe de Segurança, Supervisor_ID_12"
-  }
-  ```
-Endereço dos dados: http://localhost:8080/alertas
+npx expo start
+```
+Após iniciar o projeto, o Expo abrirá o painel de execução no navegador, permitindo executar o aplicativo no celular através do Expo Go ou em um emulador Android/iOS.
 
-Primeiramente se faz a criação destes dados JSON pelo Postman com o comando POST de acordo com a imagem seguinte:
+O aplicativo funciona totalmente com estado local e dados mockados, não utilizando integração com backend ou APIs externas nesta sprint.
 
-![POST dos dados iniciais no Postman](images/1.png)
+A aplicação 2 pode ser acessada via navegador pelo endereço:
+http://localhost:8081/
 
-Após a execução, pode-se confirmar a presença dos dados usando o comando GET:
 
-![GET dos dados existentes](images/2.png)
+Primeiramente
 
-Depois, estes mesmos dados podem ser alterados com o comando PUT usando o mesmo URL, porém com o ID recebido no final após a utilização do comando POST no final do URL:
+![A](images/1.png)
 
-![PUT para atualização dos dados existentes](images/3.png)
+Após
 
-Por fim, pode ser feita a deletação dos dados utilizando o mesmo ID com o comando DELETE, assim esvaziando a lista por não possuir outros dados nela:
+![B](images/2.png)
 
-![DELETE dos dados criados](images/4.png)
+Depois
 
-Os dados se mantém presentes mesmo após a reinicialização da aplicação, servindo assim como um modelo básico de sistema, capaz de demonstrar como funcionaria o armazenamento de dados referentes a alertas, sendo apenas uma fração do que poderia ser um sistema de detecção de risco em tempo real.
+![C](images/3.png)
+
+Por fim
+
+![D](images/4.png)
+
+Os dados
