@@ -15,7 +15,7 @@ export const alertasMock: AlertaIndustrial[] = [
 
   {
     id: 2,
-    tipoRisco: "Área Perigoda",
+    tipoRisco: "Área Perigosa",
     descricao: "Funcionário próximo de área perigosa",
     setor: "Manutenção",
     nivelSeveridade: "ALTO",
