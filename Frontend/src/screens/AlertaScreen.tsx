@@ -1,150 +1,222 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TextInput,
-  Button
+  TouchableOpacity,
+  ActivityIndicator,
+  Switch,
+  Alert as RNAlert,
 } from "react-native";
 
-import { alertasMock } from "../data/Alertas";
+import { criarAlerta, listarAlertas } from "../services/api";
+import { Alerta } from "../types/Alerta";
+import InfoCard from "../components/InfoCard";
+import OptionChips from "../components/OptionChips";
 
-import { AlertaIndustrial } from "../types/AlertaIndustrial";
+type Props = {
+  navigation: any;
+};
 
-import AlertaCard from "../components/AlertaCard";
+export default function AlertasScreen({ navigation }: Props) {
+  const [alertas, setAlertas] = useState<Alerta[]>([]);
+  const [carregando, setCarregando] = useState(true);
 
-export default function AlertaScreen() {
-
-  const [alertas, setAlertas] =
-    useState<AlertaIndustrial[]>(alertasMock);
-
+  const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [nivelCriticidade, setNivelCriticidade] = useState("ALTO");
+  const [sistemaAfetado, setSistemaAfetado] = useState("");
+  const [resolvido, setResolvido] = useState(false);
 
-  function adicionarAlerta() {
+  async function carregarAlertas() {
+    try {
+      setCarregando(true);
+      const dados = await listarAlertas();
+      setAlertas(Array.isArray(dados) ? dados : []);
+    } catch (error) {
+      console.log("Erro ao carregar alertas:", error);
+      RNAlert.alert("Erro", "Não foi possível carregar os alertas.");
+    } finally {
+      setCarregando(false);
+    }
+  }
 
-  const severidades = ["BAIXO", "MÉDIO", "ALTO"];
+  useEffect(() => {
+    carregarAlertas();
+  }, []);
 
-  const setores = [
-    "Produção",
-    "Manutenção",
-    "Logística",
-    "Controle de Qualidade"
-  ];
-  const tipoRisco = [
-    "EPI",
-    "Área Restrita",
-    "Área Perigosa"
-  ];
-  const individuo = [
-    "Carlos Eduardo",
-    "Ednaldo Pereira",
-    "Cleber Carvalho",
-    "Steve Cesar",
-    "Jacinti Figuereda",
-    "Flaviane dos Santos",
-    "José Ribeiro",
-    "Anderson Silveira",
-    "Tomas Terlo"
-  ];
+  async function salvarAlerta() {
+    if (!titulo.trim() || !descricao.trim() || !sistemaAfetado.trim()) {
+      RNAlert.alert("Atenção", "Preencha título, descrição e sistema afetado.");
+      return;
+    }
 
-  const novoAlerta: AlertaIndustrial = {
-    id: alertas.length + 1,
+    const novoAlerta = {
+      titulo: titulo.trim(),
+      descricao: descricao.trim(),
+      nivelCriticidade,
+      sistemaAfetado: sistemaAfetado.trim(),
+      dataHora: new Date().toISOString(),
+      resolvido,
+    };
 
-    tipoRisco: 
-      tipoRisco[Math.floor(Math.random() * tipoRisco.length)],
+    try {
+      const salvo = await criarAlerta(novoAlerta);
+      setAlertas((anteriores) => [salvo, ...anteriores]);
 
-    descricao:
-      descricao.trim() !== ""
-        ? descricao 
-        : "Sem descrição",
+      setTitulo("");
+      setDescricao("");
+      setNivelCriticidade("ALTO");
+      setSistemaAfetado("");
+      setResolvido(false);
 
-    setor:
-      setores[Math.floor(Math.random() * setores.length)],
-
-    nivelSeveridade:
-      severidades[Math.floor(Math.random() * severidades.length)],
-
-    dataHora: "20/05/2026",
-
-    resolvido:
-      Math.random() < 0.5,
-
-    individuosSobRisco: 
-      individuo[Math.floor(Math.random() * individuo.length)],
-
-    gruposNotificados: "Equipe de Segurança"
-  };
-
-  setAlertas([...alertas, novoAlerta]);
-
-  setDescricao("");
+      RNAlert.alert("Sucesso", "Alerta enviado para o backend.");
+    } catch (error) {
+      console.log("Erro ao criar alerta:", error);
+      RNAlert.alert("Erro", "Falha ao enviar o alerta.");
+    }
   }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.titulo}>Alertas Críticos</Text>
 
-      <Text style={styles.titulo}>
-        Alertas Industriais
-      </Text>
+      <View style={styles.formulario}>
+        <TextInput
+          style={styles.input}
+          placeholder="Título"
+          value={titulo}
+          onChangeText={setTitulo}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Insira aqui a descrição do alerta"
-        value={descricao}
-        onChangeText={setDescricao}
-        
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Descrição"
+          value={descricao}
+          onChangeText={setDescricao}
+          multiline
+        />
 
-      <Button
-        title="Adicionar Alerta"
-        onPress={adicionarAlerta}
-        color="#0152a3"
-      />
+        <OptionChips
+          label="Nível de criticidade"
+          options={["BAIXO", "MÉDIO", "ALTO", "EXTREMO"]}
+          value={nivelCriticidade}
+          onChange={setNivelCriticidade}
+        />
 
-      <View style={styles.lista}>
-        {alertas.map((alerta) => (
-          <AlertaCard
-            key={alerta.id}
-            alerta={alerta}
-          />
-        ))}
+        <TextInput
+          style={styles.input}
+          placeholder="Sistema afetado"
+          value={sistemaAfetado}
+          onChangeText={setSistemaAfetado}
+        />
+
+        <View style={styles.switchLinha}>
+          <Text style={styles.switchTexto}>Resolvido</Text>
+          <Switch value={resolvido} onValueChange={setResolvido} />
+        </View>
+
+        <TouchableOpacity style={styles.botao} onPress={salvarAlerta}>
+          <Text style={styles.botaoTexto}>Enviar alerta</Text>
+        </TouchableOpacity>
       </View>
 
+      <Text style={styles.subtitulo}>Alertas salvos</Text>
+
+      {carregando ? (
+        <ActivityIndicator size="large" />
+      ) : (
+        <View style={styles.lista}>
+          {alertas.length > 0 ? (
+            alertas.map((item) => (
+              <InfoCard key={item.id} item={item} />
+            ))
+          ) : (
+            <Text style={styles.vazio}>Nenhum alerta encontrado.</Text>
+          )}
+        </View>
+      )}
+
+      <TouchableOpacity
+        style={styles.botaoVoltar}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.botaoTexto}>Voltar</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-
   container: {
     padding: 20,
-    alignItems: "center",
     flexGrow: 1,
-    backgroundColor: "#04a68f"
+    backgroundColor: "#08111f",
   },
-
   titulo: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
-    color: "#fff"
+    color: "#fff",
+    marginBottom: 16,
+    textAlign: "center",
   },
-
-  input: {
-    width: "100%",
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
+  subtitulo: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 20,
     marginBottom: 10,
-    backgroundColor: "#fff",
-    textAlign: "center"
   },
-
+  formulario: {
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 12,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#cfd8dc",
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+    textAlignVertical: "top",
+  },
+  switchLinha: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  switchTexto: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  botao: {
+    backgroundColor: "#c62828",
+    padding: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  botaoVoltar: {
+    backgroundColor: "#455a64",
+    padding: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 16,
+  },
+  botaoTexto: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
   lista: {
-    width: "100%",
-    marginTop: 20
-  }
-
+    marginTop: 10,
+  },
+  vazio: {
+    color: "#cfd8dc",
+    textAlign: "center",
+    marginTop: 10,
+  },
 });
