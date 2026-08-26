@@ -1,47 +1,34 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
 
 import { AlertaIndustrial } from "../types/AlertaIndustrial";
 
 type Props = {
   alerta: AlertaIndustrial;
+  onDetalhes: (id: number) => void;
 };
 
-export default function AlertaCard({ alerta }: Props) {
+export default function AlertaCard({
+  alerta,
+  onDetalhes,
+}: Props) {
+
+  const iconeStatus = alerta.resolvido ? "✅" : "⛔";
+
   return (
     <View style={styles.card}>
 
       <Text style={styles.titulo}>
-        {alerta.tipoRisco}
+        {iconeStatus} #{alerta.id} - {alerta.tipoRisco}
       </Text>
 
-      <Text>
-        Descrição: {alerta.descricao}
-      </Text>
-
-      <Text>
-        Setor: {alerta.setor}
-      </Text>
-
-      <Text>
-        Risco: {alerta.nivelSeveridade}
-      </Text>
-
-      <Text>
-        Data: {alerta.dataHora}
-      </Text>
-
-      <Text>
-        Resolvido: {alerta.resolvido ? "Sim" : "Não"}
-      </Text>
-
-        <Text>
-        Indivíduo em risco: {alerta.individuosSobRisco}
-        </Text>
-
-        <Text>
-        Notificados: {alerta.gruposNotificados}
-        </Text>
+      <View style={styles.botao}>
+        <Button
+          title="Ver detalhes"
+          onPress={() => onDetalhes(alerta.id)}
+          color="#0152a3"
+        />
+      </View>
 
     </View>
   );
@@ -54,12 +41,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 15,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    alignItems: "center",
   },
 
   titulo: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10
-  }
+    marginBottom: 10,
+    textAlign: "center",
+  },
+
+  botao: {
+    width: "70%",
+  },
 });

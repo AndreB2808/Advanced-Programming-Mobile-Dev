@@ -1,4 +1,4 @@
-# Challenge Sprint 2 📱
+# Challenge Sprint 3 [Frontend] 🏭
 
 ## 🖥️ Descrição do Frontend
 A aplicação desenvolvida nessa sprint representa um sistema mobile de monitoramento de alertas industriais em um cenário de segurança baseado em visão computacional. O aplicativo foi desenvolvido utilizando React Native com Expo e TypeScript, seguindo o padrão das aulas,  simulando o funcionamento de um sistema de detecção de riscos em ambiente industrial.
@@ -17,6 +17,9 @@ src/
 │   └── Alertas.ts
 ├── screens
 │   └── AlertaScreen.tsx
+├── services
+│   └── alertaService.ts
+│   └── api.ts
 └── types
     └── AlertaIndustrial.ts
 ```
@@ -49,3 +52,6 @@ Para fins de simplificação, os dados do alerta criado são aleatoriamente pré
 Vídeo de demonstração da instalação, inicialização e usagem:
 
 https://github.com/user-attachments/assets/fb63081b-23bb-453a-9889-7876906cfc67
+
+## 🗂️ Repositório Backend
+https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint3BE
