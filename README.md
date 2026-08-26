@@ -39,7 +39,7 @@ http://localhost:8080
        H2
 ```
 
-O frontend não utiliza mais dados mockados como fonte dos alertas com todas as informações exibidas são obtidas através da API do backend. O controller utiliza `@CrossOrigin` para permitir requisições realizadas pelo frontend executado em uma origem diferente.
+O frontend não utiliza mais dados mockados como fonte dos alertas, e todas as informações exibidas são obtidas através da API do backend. O controller utiliza `@CrossOrigin` para permitir requisições realizadas pelo frontend executado em uma origem diferente.
 
 Com as duas aplicações funcionando simultaneamente, o frontend deverá:
 
@@ -53,7 +53,7 @@ Com as duas aplicações funcionando simultaneamente, o frontend deverá:
 
 ## ⚙️ Como iniciar o Backend
 
-Para executar o backend, é necessário possuir o Java 17+ instalado.
+Para executar o backend, é necessário possuir o Java 17 instalado.
 O projeto pode ser aberto em uma IDE compatível com Java e Spring Boot, como Visual Studio Code ou IntelliJ IDEA.
 
 Após isso, o backend pode ser iniciado executando o arquivo Java abaixo:
