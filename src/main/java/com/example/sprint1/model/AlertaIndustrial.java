@@ -56,9 +56,10 @@ public class AlertaIndustrial {
         return dataHora;
     }
 
-    public String getIndividuosAfetados() {
-    return individuosSobRisco;
+    public String getIndividuosSobRisco() {
+        return individuosSobRisco;
     }
+    
     public String getGruposNotificados() {
     return gruposNotificados;
     }
@@ -94,10 +95,11 @@ public class AlertaIndustrial {
     public void setResolvido(Boolean resolvido) {
         this.resolvido = resolvido;
     }
-    public void setIndividuosSobRisco(String individuosAfetados) {
-    this.individuosSobRisco = individuosAfetados;
-    
+
+    public void setIndividuosSobRisco(String individuosSobRisco) {
+        this.individuosSobRisco = individuosSobRisco;
     }
+    
     public void setGruposNotificados(String gruposNotificados) {
     this.gruposNotificados = gruposNotificados;
     }

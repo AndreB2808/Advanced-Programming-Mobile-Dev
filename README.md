@@ -1,6 +1,6 @@
-# Challenge Sprint 1 🏫
+# Challenge Sprint 3 [Backend] 🏭
 
-## 🖥️ Descrição da API e tecnologias
+## 🖥️ Descrição do Backend
 A API desenvolvida nessa sprint representa o gerenciamento de alertas industriais em um cenário de segurança baseado em visão computacional. A aplicação permite o cadastro, consulta, atualização e remoção de registros de alerta relacionados a situações de risco em ambiente industrial. Por se tratar de uma aplicação básica, apenas a função de alerta está presente, porém em um projeto real teria outras entidades como "Equipamento" e "SensorMovimento" por exemplo.
 
 A proposta foi desenvolvida com Spring Boot, Java 17, Spring Web, Spring Data JPA, Maven e banco H2 em modo file, seguindo a arquitetura utilizada nas aula.
@@ -60,3 +60,6 @@ Por fim, pode ser feita a deletação dos dados utilizando o mesmo ID com o coma
 ![DELETE dos dados criados](images/4.png)
 
 Os dados se mantém presentes mesmo após a reinicialização da aplicação, servindo assim como um modelo básico de sistema, capaz de demonstrar como funcionaria o armazenamento de dados referentes a alertas, sendo apenas uma fração do que poderia ser um sistema de detecção de risco em tempo real.
+
+## 🗂️ Repositório Frontend
+https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint3FE

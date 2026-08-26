@@ -8,6 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/alertas")
+@CrossOrigin
 public class AlertaIndustrialController {
 
     private final AlertaIndustrialService service;
