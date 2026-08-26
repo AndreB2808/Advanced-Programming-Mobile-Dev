@@ -1,57 +1,224 @@
 # Challenge Sprint 3 [Frontend] 🏭
 
-## 🖥️ Descrição do Frontend
-A aplicação desenvolvida nessa sprint representa um sistema mobile de monitoramento de alertas industriais em um cenário de segurança baseado em visão computacional. O aplicativo foi desenvolvido utilizando React Native com Expo e TypeScript, seguindo o padrão das aulas,  simulando o funcionamento de um sistema de detecção de riscos em ambiente industrial.
+## 🖥️ Descrição do Projeto
 
-O programa permite visualizar alertas industriais, e dentro desses alertas exibir informações relacionadas ao tipo de risco, setor afetado, nível de severidade, funcionários / pessoas envolvidas e grupos notificados pelo alerta, além de permitir a criação de novos alertas diretamente pela interface utilizando estado local.
+A aplicação desenvolvida nessa sprint representa um sistema de monitoramento de alertas industriais em um cenário de segurança baseado em visão computacional. O backend desenvolvido com Spring Boot foi integrado ao frontend desenvolvido em React Native com Expo, permitindo que os alertas exibidos e criados no aplicativo sejam armazenados e consultados diretamente através da API.
+O sistema permite listar alertas industriais, consultar um alerta específico por ID, cadastrar novos alertas e atualizar registros existentes, como ao marcar um alerta como resolvido. O backend foi desenvolvido utilizando Java 17, Spring Boot, Spring Web, Spring Data JPA, Maven e banco de dados H2 em modo file. Os dados permanecem armazenados mesmo após a reinicialização da aplicação. Além disso, o projeto possui um arquivo `data.sql` responsável pela criação dos dados iniciais utilizados para demonstração do sistema.
 
-Por se tratar de uma aplicação frontend sem integração com backend, os dados utilizados no sistema são mockados através de arquivos locais em TypeScript. Os dados dos alertas são gerados aleatoriamente (exceto a descrição que é inserida pelo usuário), simulando diferentes situações industriais.
+## 🗂️ Estrutura do Frontend
 
-## 🗂️ Estrutura do Projeto
-```
-App.tsx
+```text
 src/
-├── components
+├── components/
 │   └── AlertaCard.tsx
-├── data
-│   └── Alertas.ts
-├── screens
+├── screens/
 │   └── AlertaScreen.tsx
-├── services
+├── services/
+│   ├── api.ts
 │   └── alertaService.ts
-│   └── api.ts
-└── types
+└── types/
     └── AlertaIndustrial.ts
 ```
-## ⚙️ Como utilizar 
 
-Para executar o programa, é necessário possuir o Node.js e o Expo instalado via uma IDE compatível (no meu caso utilizei o Visual Studio Code para isso). Para fazer a instalação inicial, primeiro é necessário fazer a instalação do conteúdo deste repositório. Após ter a pasta do projeto, basta abri-la na IDE escolhida e dentro da mesma abrir um terminal novo e digitar:
+## 🔗 Integração Backend e Frontend
+
+Foi realizada a integração entre as duas aplicações executadas simultaneamente:
+
+```text
+Frontend Expo
+http://localhost:8081
+        ↓
+      Axios
+        ↓
+Backend Spring Boot
+http://localhost:8080
+        ↓
+       H2
 ```
+
+O frontend não utiliza mais dados mockados como fonte dos alertas com todas as informações exibidas são obtidas através da API do backend. O controller utiliza `@CrossOrigin` para permitir requisições realizadas pelo frontend executado em uma origem diferente.
+
+Com as duas aplicações funcionando simultaneamente, o frontend deverá:
+
+* listar os alertas armazenados no backend;
+* permitir o cadastro de novos alertas;
+* gerar automaticamente a data e o horário do cadastro;
+* criar novos alertas inicialmente como não resolvidos;
+* consultar os detalhes de um alerta através de seu ID;
+* permitir marcar um alerta como resolvido;
+* refletir as alterações realizadas diretamente no banco de dados.
+
+## ⚙️ Como iniciar o Backend
+
+Para executar o backend, é necessário possuir o Java 17+ instalado.
+O projeto pode ser aberto em uma IDE compatível com Java e Spring Boot, como Visual Studio Code ou IntelliJ IDEA.
+
+Após isso, o backend pode ser iniciado executando o arquivo Java abaixo:
+
+```text
+Sprint1Application.java
+```
+
+Após a inicialização, o backend estará disponível em:
+
+```text
+http://localhost:8080
+```
+
+Os alertas podem ser visualizados diretamente pelo navegador através de:
+
+```text
+http://localhost:8080/alertas
+```
+
+## 📱 Como iniciar o Frontend
+
+Para utilizar a integração completa, o frontend também deve estar em execução. Após baixar a branch correspondente ao frontend, execute dentro da pasta do projeto:
+
+```bash
 npm install
-
-#APÓS A INSTALAÇÃO#
-
 npx expo start
 ```
-Após iniciar o projeto, a tecla "w" pode ser pressionada no terminal para o Expo executar o programa no navegador, ou então pode ser acessado diretamente após a execução pelo endereço: http://localhost:8081/
 
-O aplicativo funciona totalmente com estado local e dados mockados, não utilizando integração com backend ou APIs externas, mas com capacidade de integração futura caso seja necessário.
+Após iniciar o Expo, pressione:
 
-Ao abrir a página Web, é apresentado 4 exemplos de alertas já criados.
+```text
+w
+```
 
-![A](images/1.png)
+para abrir a aplicação no navegador. Por padrão, o frontend estará disponível em:
 
-Clicando na barra de texto é possível inserir uma descrição de algum alerta a ser gerado, e após clicar no botão "ADICIONAR ALERTA", é criado o alerta utilizando a descrição fornecida.
+```text
+http://localhost:8081
+```
 
-![B](images/2.png)
+O backend e o frontend devem permanecer executados simultaneamente durante o uso da aplicação.
 
-![C](images/3.png)
+## 📡 Endpoints da API
 
-Para fins de simplificação, os dados do alerta criado são aleatoriamente pré-definidos, com apenas a descrição sendo inserida pelo usuário.
+A API utiliza o endereço base:
 
-Vídeo de demonstração da instalação, inicialização e usagem:
+```text
+http://localhost:8080
+```
 
-https://github.com/user-attachments/assets/fb63081b-23bb-453a-9889-7876906cfc67
+Endpoints disponíveis:
 
-## 🗂️ Repositório Backend
+```text
+GET    /alertas
+```
+
+Lista todos os alertas armazenados no banco.
+
+```text
+GET    /alertas/{id}
+```
+
+Consulta os detalhes de um alerta específico através de seu ID.
+
+```text
+POST   /alertas
+```
+
+Cria um novo alerta.
+
+```text
+PUT    /alertas/{id}
+```
+
+Atualiza um alerta existente. No frontend, este endpoint é utilizado para marcar um alerta como resolvido.
+
+```text
+DELETE /alertas/{id}
+```
+
+Remove um alerta existente.
+
+### Exemplo de JSON
+
+```json
+{
+  "tipoRisco": "EPI",
+  "descricao": "Funcionário sem máscara anti-toxina",
+  "setor": "PRODUÇÃO",
+  "nivelSeveridade": "ALTO",
+  "dataHora": "2026-04-24 19:32",
+  "resolvido": false,
+  "individuosSobRisco": "João Silva",
+  "gruposNotificados": "Equipe de Segurança"
+}
+```
+
+## 🗃️ Banco de Dados H2
+
+O banco de dados pode ser acessado através de:
+
+```text
+http://localhost:8080/h2-console
+```
+
+As configurações de conexão estão localizadas no arquivo:
+
+```text
+src/main/resources/application.properties
+```
+
+O H2 utiliza persistência em modo file, permitindo que os registros sejam mantidos após a reinicialização da aplicação.
+
+O arquivo:
+
+```text
+src/main/resources/data.sql
+```
+
+contém registros iniciais utilizados para demonstração do sistema.
+
+## 📂 Camada `services` do Frontend
+
+A comunicação entre o frontend e esta API é isolada através da pasta:
+
+```text
+src/services/
+├── api.ts
+└── alertaService.ts
+```
+
+O arquivo `api.ts` contém a configuração central do Axios, enquanto `alertaService.ts` contém as funções responsáveis pelas operações relacionadas aos alertas.
+
+Dessa forma, as telas do aplicativo não utilizam Axios diretamente e não precisam montar URLs manualmente.
+
+## 🌐 BASE_URL
+
+No frontend, a URL do backend é configurada no arquivo:
+
+```text
+src/services/api.ts
+```
+
+Para execução pelo navegador utilizando Expo Web:
+
+```text
+http://localhost:8080
+```
+
+Dependendo da plataforma utilizada, o endereço deve ser alterado:
+
+```text
+Expo Web / iOS Simulator → http://localhost:8080
+
+Android Emulator → http://10.0.2.2:8080
+
+Dispositivo físico → http://IP-DA-MAQUINA:8080
+```
+
+## ⚠️ Backend indisponível
+
+Caso o backend não esteja em execução ou não possa ser acessado, o frontend não utiliza dados mockados como alternativa.
+
+A requisição é tratada através de `try/catch/finally` e a aplicação apresenta uma mensagem informando que não foi possível carregar ou realizar a operação solicitada.
+
+Dessa forma, fica claro para o usuário quando a comunicação com a API não está disponível.
+
+## 🗂️ Repositório Frontend
+
 https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint3BE
