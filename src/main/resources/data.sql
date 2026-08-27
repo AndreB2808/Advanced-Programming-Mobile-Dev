@@ -11,7 +11,7 @@ INSERT INTO
         individuos_sob_risco,
         grupos_notificados
     )
-SELECT 'EPI', 'Funcionário sem máscara anti-toxina', 'PRODUÇÃO', 'ALTO', '2026-04-24 19:32', TRUE, 'João Pereira', 'RH'
+SELECT 'EPI', 'Funcionário sem máscara anti-toxina', 'Produção', 'ALTO', '2026-04-24 19:32', TRUE, 'João Pereira', 'RH'
 WHERE
     NOT EXISTS (
         SELECT 1
