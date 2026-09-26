@@ -6,7 +6,9 @@ Arthur Augutus (555106) 
 ## 🖥️ Descrição do Projeto
 
 A aplicação desenvolvida nessa sprint representa um sistema de monitoramento de alertas industriais em um cenário de segurança baseado em visão computacional. O backend desenvolvido com Spring Boot foi integrado ao frontend desenvolvido em React Native com Expo, permitindo que os alertas exibidos e criados no aplicativo sejam armazenados e consultados diretamente através da API.
+
 O sistema permite listar alertas industriais, consultar um alerta específico por ID, cadastrar novos alertas e atualizar registros existentes, como ao marcar um alerta como resolvido. O backend foi desenvolvido utilizando Java 17, Spring Boot, Spring Web, Spring Data JPA, Maven e banco de dados H2 em modo file. Os dados permanecem armazenados mesmo após a reinicialização da aplicação. Além disso, o projeto possui um arquivo `data.sql` responsável pela criação dos dados iniciais utilizados para demonstração do sistema.
+
 !!!!!!!!!!!!O problema abordado é a necessidade de monitorar e registrar situações de risco em ambientes industriais, permitindo que os alertas sejam consultados e acompanhados por meio de uma aplicação mobile.A principal entidade do sistema é a AlertaIndustrial, responsável por representar os alertas registrados, contendo informações como tipo de risco, descrição, setor, severidade, data e hora, indivíduos sob risco, grupos notificados e status de resolução.
 
 ## 🗂️ Estrutura do Backend
