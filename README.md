@@ -147,7 +147,7 @@ PUT    /alertas/{id}
 
 Atualiza um alerta existente. No frontend, este endpoint é utilizado para marcar um alerta como resolvido.
 
-```text
+```tex
 DELETE /alertas/{id}
 ```
 
