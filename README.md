@@ -1,9 +1,12 @@
-# Challenge Sprint 3 [Frontend] 🏭
+# Challenge Sprint 4 [Frontend] 🏭
 
 ## 🖥️ Descrição do Projeto
 
 A aplicação desenvolvida nessa sprint representa um sistema de monitoramento de alertas industriais em um cenário de segurança baseado em visão computacional. O backend desenvolvido com Spring Boot foi integrado ao frontend desenvolvido em React Native com Expo, permitindo que os alertas exibidos e criados no aplicativo sejam armazenados e consultados diretamente através da API.
+
 O sistema permite listar alertas industriais, consultar um alerta específico por ID, cadastrar novos alertas e atualizar registros existentes, como ao marcar um alerta como resolvido. O backend foi desenvolvido utilizando Java 17, Spring Boot, Spring Web, Spring Data JPA, Maven e banco de dados H2 em modo file. Os dados permanecem armazenados mesmo após a reinicialização da aplicação. Além disso, o projeto possui um arquivo `data.sql` responsável pela criação dos dados iniciais utilizados para demonstração do sistema.
+
+A principal entidade do sistema é a AlertaIndustrial, responsável por representar os alertas registrados, contendo informações como tipo de risco, descrição, setor, severidade, data e hora, indivíduos sob risco, grupos notificados e status de resolução.
 
 ## 🗂️ Estrutura do Frontend
 
@@ -36,21 +39,37 @@ http://localhost:8080
        H2
 ```
 
-O frontend não utiliza mais dados mockados como fonte dos alertas, e todas as informações exibidas são obtidas através da API do backend. O controller utiliza `@CrossOrigin` para permitir requisições realizadas pelo frontend executado em uma origem diferente.
+O frontend não utiliza mais dados mockados como fonte dos alertas, e todas as informações exibidas são obtidas através da API do backend. O controller utiliza `@CrossOrigin` para permitir requisições realizadas pelo frontend executado em uma origem diferente. A tela AlertaScreen.tsx utiliza as funções de alertaService.ts, que por sua vez utiliza a configuração do Axios presente em api.ts para realizar as conexões aos endpoints da API.
+
+```text
+AlertaScreen.tsx
+        ↓
+alertaService.ts
+        ↓
+     api.ts
+        ↓
+Endpoints /alertas
+```
 
 Com as duas aplicações funcionando simultaneamente, o frontend deverá:
 
-* listar os alertas armazenados no backend;
-* permitir o cadastro de novos alertas;
-* gerar automaticamente a data e o horário do cadastro;
-* criar novos alertas inicialmente como não resolvidos;
-* consultar os detalhes de um alerta através de seu ID;
-* permitir marcar um alerta como resolvido;
-* refletir as alterações realizadas diretamente no banco de dados.
+* listar os alertas armazenados no backend
+* permitir o cadastro de novos alertas
+* gerar automaticamente a data e o horário do cadastro
+* criar novos alertas inicialmente como não resolvidos
+* consultar os detalhes de um alerta através de seu ID
+* permitir marcar um alerta como resolvido
+* refletir as alterações realizadas diretamente no banco de dados
 
 ## ⚙️ Como iniciar o Backend
 
-Para executar o backend, é necessário possuir o Java 17 instalado.
+Para executar o backend, é necessário possuir instalado:
+
+* Java 17 (Backend)
+* Maven (Backend)
+* Node.js (Frontend)
+* Expo (Frontend)
+
 O projeto pode ser aberto em uma IDE compatível com Java e Spring Boot, como Visual Studio Code ou IntelliJ IDEA.
 
 Após isso, o backend pode ser iniciado executando o arquivo Java abaixo:
@@ -211,14 +230,36 @@ Android Emulator → http://10.0.2.2:8080
 Dispositivo físico → http://IP-DA-MAQUINA:8080
 ```
 
-## ⚠️ Backend indisponível
+## ⚠️ Troubleshooting
 
 Caso o backend não esteja em execução ou não possa ser acessado, o frontend não utiliza dados mockados como alternativa.
 
-A requisição é tratada através de `try/catch/finally` e a aplicação apresenta uma mensagem informando que não foi possível carregar ou realizar a operação solicitada.
+Para fazer a verificação, mantenha o frontend em execução e interrompa o backend Spring Boot. Em seguida, recarregue a aplicação Expo. Como os dados são obtidos diretamente da API, os alertas não serão carregados e a aplicação exibirá uma mensagem de erro informando que não foi possível acessar os dados.
 
-Dessa forma, fica claro para o usuário quando a comunicação com a API não está disponível.
+Para restabelecer o funcionamento da aplicação, basta iniciar novamente o backend em:
 
-## 🗂️ Repositório Backend
+```text
+http://localhost:8080
+```
+e recarregar a página do frontend.
 
-https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint3BE
+A requisição é tratada através de `try/catch/finally` e a aplicação apresenta uma mensagem informando que não foi possível carregar ou realizar a operação solicitada. Dessa forma, fica claro para o usuário quando a comunicação com a API não está disponível.
+
+Outros pontos que podem ser verificados caso a integração não funcione:
+
+* Confirme se o backend está realmente sendo executado na porta 8080
+* Confirme se o frontend Expo está em execução corretamente
+* Verifique se a "BASE_URL" em "src/services/api.ts" corresponde ao ambiente utilizado
+* No Expo Web ou iOS Simulator, utilize "http://localhost:8080", enquanto no Android Emulator utilize "http://10.0.2.2:8080"
+
+## 🎥 Vídeo Youtube
+
+## 🗂️ Repositórios
+
+### Backend
+
+https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint4BE
+
+### Frontend
+
+https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint4FE
