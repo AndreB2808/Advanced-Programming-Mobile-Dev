@@ -260,6 +260,7 @@ Outros pontos que podem ser verificados caso a integração não funcione:
 * No Expo Web ou iOS Simulator, utilize "http://localhost:8080", enquanto no Android Emulator utilize "http://10.0.2.2:8080"
 
 ## 🎥 Vídeo Youtube
+https://youtu.be/uvEc-hQKZrI
 
 ## 🗂️ Repositórios
 
