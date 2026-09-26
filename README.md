@@ -219,6 +219,6 @@ A requisição é tratada através de `try/catch/finally` e a aplicação aprese
 
 Dessa forma, fica claro para o usuário quando a comunicação com a API não está disponível.
 
-## 🗂️ Repositório Backtend
+## 🗂️ Repositório Backend
 
 https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint3BE
