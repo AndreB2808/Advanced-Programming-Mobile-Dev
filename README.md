@@ -244,7 +244,7 @@ Outros pontos que podem ser verificados caso a integração não funcione:
 * Confirme se o backend está realmente sendo executado na porta 8080
 * Confirme se o frontend Expo está em execução corretamente
 * Verifique se a "BASE_URL" em "src/services/api.ts" corresponde ao ambiente utilizado
-* No Expo Web ou iOS Simulator, utilize "http://localhost:8080", enquanto no Android Emulator utilizar "http://10.0.2.2:8080"
+* No Expo Web ou iOS Simulator, utilize "http://localhost:8080", enquanto no Android Emulator utilize "http://10.0.2.2:8080"
 
 ## 🗂️ Repositório Frontend
 
