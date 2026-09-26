@@ -1,6 +1,7 @@
-# Challenge Sprint 3 [Backend] 🏭
+# Challenge Sprint 4 [Backend] 🏭
 
 André Bartolo (558319)  
+
 Arthur Augutus (555106)  
 
 ## 🖥️ Descrição do Projeto
@@ -9,7 +10,7 @@ A aplicação desenvolvida nessa sprint representa um sistema de monitoramento d
 
 O sistema permite listar alertas industriais, consultar um alerta específico por ID, cadastrar novos alertas e atualizar registros existentes, como ao marcar um alerta como resolvido. O backend foi desenvolvido utilizando Java 17, Spring Boot, Spring Web, Spring Data JPA, Maven e banco de dados H2 em modo file. Os dados permanecem armazenados mesmo após a reinicialização da aplicação. Além disso, o projeto possui um arquivo `data.sql` responsável pela criação dos dados iniciais utilizados para demonstração do sistema.
 
-!!!!!!!!!!!!O problema abordado é a necessidade de monitorar e registrar situações de risco em ambientes industriais, permitindo que os alertas sejam consultados e acompanhados por meio de uma aplicação mobile.A principal entidade do sistema é a AlertaIndustrial, responsável por representar os alertas registrados, contendo informações como tipo de risco, descrição, setor, severidade, data e hora, indivíduos sob risco, grupos notificados e status de resolução.
+A principal entidade do sistema é a AlertaIndustrial, responsável por representar os alertas registrados, contendo informações como tipo de risco, descrição, setor, severidade, data e hora, indivíduos sob risco, grupos notificados e status de resolução.
 
 ## 🗂️ Estrutura do Backend
 
@@ -258,12 +259,14 @@ Outros pontos que podem ser verificados caso a integração não funcione:
 * Verifique se a "BASE_URL" em "src/services/api.ts" corresponde ao ambiente utilizado
 * No Expo Web ou iOS Simulator, utilize "http://localhost:8080", enquanto no Android Emulator utilize "http://10.0.2.2:8080"
 
+## 🎥 Vídeo Youtube
+
 ## 🗂️ Repositórios
 
 ### Backend
 
-https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint3BE
+https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint4BE
 
 ### Frontend
 
-https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint3FE
+https://github.com/AndreB2808/Advanced-Programming-Mobile-Dev/tree/sprint4FE
