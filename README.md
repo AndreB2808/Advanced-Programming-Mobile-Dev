@@ -6,9 +6,9 @@ Arthur Augutus (555106) 
 
 ## 🖥️ Descrição do Projeto
 
-A aplicação desenvolvida nessa sprint representa um sistema de monitoramento de alertas industriais em um cenário de segurança baseado em visão computacional. O backend desenvolvido com Spring Boot foi integrado ao frontend desenvolvido em React Native com Expo, permitindo que os alertas exibidos e criados no aplicativo sejam armazenados e consultados diretamente através da API.
+A aplicação desenvolvida nessa sprint representa um sistema de monitoramento de alertas industriais em um cenário de segurança baseado em visão computacional. O Backend desenvolvido com Spring Boot foi integrado ao Frontend desenvolvido em React Native com Expo, permitindo que os alertas exibidos e criados no aplicativo sejam armazenados e consultados diretamente através da API.
 
-O sistema permite listar alertas industriais, consultar um alerta específico por ID, cadastrar novos alertas e atualizar registros existentes, como ao marcar um alerta como resolvido. O backend foi desenvolvido utilizando Java 17, Spring Boot, Spring Web, Spring Data JPA, Maven e banco de dados H2 em modo file. Os dados permanecem armazenados mesmo após a reinicialização da aplicação. Além disso, o projeto possui um arquivo `data.sql` responsável pela criação dos dados iniciais utilizados para demonstração do sistema.
+O sistema permite listar alertas industriais, consultar um alerta específico por ID, cadastrar novos alertas e atualizar registros existentes, como ao marcar um alerta como resolvido. O Backend foi desenvolvido utilizando Java 17, Spring Boot, Spring Web, Spring Data JPA, Maven e banco de dados H2 em modo file. Os dados permanecem armazenados mesmo após a reinicialização da aplicação. Além disso, o projeto possui um arquivo `data.sql` responsável pela criação dos dados iniciais utilizados para demonstração do sistema.
 
 A principal entidade do sistema é a AlertaIndustrial, responsável por representar os alertas registrados, contendo informações como tipo de risco, descrição, setor, severidade, data e hora, indivíduos sob risco, grupos notificados e status de resolução.
 
@@ -46,7 +46,7 @@ http://localhost:8080
        H2
 ```
 
-O frontend não utiliza mais dados mockados como fonte dos alertas, e todas as informações exibidas são obtidas através da API do backend. O controller utiliza `@CrossOrigin` para permitir requisições realizadas pelo frontend executado em uma origem diferente. A tela AlertaScreen.tsx utiliza as funções de alertaService.ts, que por sua vez utiliza a configuração do Axios presente em api.ts para realizar as conexões aos endpoints da API.
+O Frontend não utiliza mais dados mockados como fonte dos alertas, e todas as informações exibidas são obtidas através da API do Backend. O controller utiliza `@CrossOrigin` para permitir requisições realizadas pelo Frontend executado em uma origem diferente. A tela AlertaScreen.tsx utiliza as funções de alertaService.ts, que por sua vez utiliza a configuração do Axios presente em api.ts para realizar as conexões aos endpoints da API.
 
 ```text
 AlertaScreen.tsx
@@ -57,10 +57,21 @@ alertaService.ts
         ↓
 Endpoints /alertas
 ```
+Quando o Backend é suspenso enquanto o Frontend continua em execução, é exibida a mensagem de erro:
 
-Com as duas aplicações funcionando simultaneamente, o frontend deverá:
+```text
+Não foi possível carregar os alertas. Verifique se o Backend está rodando em https://localhost:8080
+```
 
-* listar os alertas armazenados no backend
+Ou então, caso ocorra uma tentativa de criar um alerta com o Backend desligado:
+
+```text
+Não foi possível criar o alerta. VEja o console para mais detalhes.
+```
+
+Com as duas aplicações funcionando simultaneamente, o Frontend deverá:
+
+* listar os alertas armazenados no Backend
 * permitir o cadastro de novos alertas
 * gerar automaticamente a data e o horário do cadastro
 * criar novos alertas inicialmente como não resolvidos
@@ -70,7 +81,7 @@ Com as duas aplicações funcionando simultaneamente, o frontend deverá:
 
 ## ⚙️ Como iniciar o Backend
 
-Para executar o backend, é necessário possuir instalado:
+Para executar o Backend, é necessário possuir instalado:
 
 * Java 17 (Backend)
 * Maven (Backend)
@@ -79,13 +90,13 @@ Para executar o backend, é necessário possuir instalado:
 
 O projeto pode ser aberto em uma IDE compatível com Java e Spring Boot, como Visual Studio Code ou IntelliJ IDEA.
 
-Após isso, o backend pode ser iniciado executando o arquivo Java abaixo:
+Após isso, o Backend pode ser iniciado executando o arquivo Java abaixo:
 
 ```text
 Sprint1Application.java
 ```
 
-Após a inicialização, o backend estará disponível em:
+Após a inicialização, o Backend estará disponível em:
 
 ```text
 http://localhost:8080
@@ -99,7 +110,7 @@ http://localhost:8080/alertas
 
 ## 📱 Como iniciar o Frontend
 
-Para utilizar a integração completa, o frontend também deve estar em execução. Após baixar a branch correspondente ao frontend, execute dentro da pasta do projeto:
+Para utilizar a integração completa, o Frontend também deve estar em execução. Após baixar a branch correspondente ao Frontend, execute dentro da pasta do projeto:
 
 ```bash
 npm install
@@ -112,13 +123,13 @@ Após iniciar o Expo, pressione:
 w
 ```
 
-para abrir a aplicação no navegador. Por padrão, o frontend estará disponível em:
+para abrir a aplicação no navegador. Por padrão, o Frontend estará disponível em:
 
 ```text
 http://localhost:8081
 ```
 
-O backend e o frontend devem permanecer executados simultaneamente durante o uso da aplicação.
+O Backend e o Frontend devem permanecer executados simultaneamente durante o uso da aplicação.
 
 ## 📡 Endpoints da API
 
@@ -152,7 +163,7 @@ Cria um novo alerta.
 PUT    /alertas/{id}
 ```
 
-Atualiza um alerta existente. No frontend, este endpoint é utilizado para marcar um alerta como resolvido.
+Atualiza um alerta existente. No Frontend, este endpoint é utilizado para marcar um alerta como resolvido.
 
 ```text
 DELETE /alertas/{id}
@@ -201,7 +212,7 @@ contém registros iniciais utilizados para demonstração do sistema.
 
 ## 📂 Camada `services` do Frontend
 
-A comunicação entre o frontend e esta API é isolada através da pasta:
+A comunicação entre o Frontend e esta API é isolada através da pasta:
 
 ```text
 src/services/
@@ -215,7 +226,7 @@ Dessa forma, as telas do aplicativo não utilizam Axios diretamente e não preci
 
 ## 🌐 BASE_URL
 
-No frontend, a URL do backend é configurada no arquivo:
+No Frontend, a URL do Backend é configurada no arquivo:
 
 ```text
 src/services/api.ts
@@ -239,23 +250,23 @@ Dispositivo físico → http://IP-DA-MAQUINA:8080
 
 ## ⚠️ Troubleshooting
 
-Caso o backend não esteja em execução ou não possa ser acessado, o frontend não utiliza dados mockados como alternativa.
+Caso o Backend não esteja em execução ou não possa ser acessado, o Frontend não utiliza dados mockados como alternativa.
 
-Para fazer a verificação, mantenha o frontend em execução e interrompa o backend Spring Boot. Em seguida, recarregue a aplicação Expo. Como os dados são obtidos diretamente da API, os alertas não serão carregados e a aplicação exibirá uma mensagem de erro informando que não foi possível acessar os dados.
+Para fazer a verificação, mantenha o Frontend em execução e interrompa o Backend Spring Boot. Em seguida, recarregue a aplicação Expo. Como os dados são obtidos diretamente da API, os alertas não serão carregados e a aplicação exibirá uma mensagem de erro informando que não foi possível acessar os dados.
 
-Para restabelecer o funcionamento da aplicação, basta iniciar novamente o backend em:
+Para restabelecer o funcionamento da aplicação, basta iniciar novamente o Backend em:
 
 ```text
 http://localhost:8080
 ```
-e recarregar a página do frontend.
+e recarregar a página do Frontend.
 
 A requisição é tratada através de `try/catch/finally` e a aplicação apresenta uma mensagem informando que não foi possível carregar ou realizar a operação solicitada. Dessa forma, fica claro para o usuário quando a comunicação com a API não está disponível.
 
 Outros pontos que podem ser verificados caso a integração não funcione:
 
-* Confirme se o backend está realmente sendo executado na porta 8080
-* Confirme se o frontend Expo está em execução corretamente
+* Confirme se o Backend está realmente sendo executado na porta 8080
+* Confirme se o Frontend Expo está em execução corretamente
 * Verifique se a "BASE_URL" em "src/services/api.ts" corresponde ao ambiente utilizado
 * No Expo Web ou iOS Simulator, utilize "http://localhost:8080", enquanto no Android Emulator utilize "http://10.0.2.2:8080"
 
