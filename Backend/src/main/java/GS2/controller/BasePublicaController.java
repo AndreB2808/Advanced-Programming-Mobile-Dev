@@ -1,4 +1,5 @@
-package GS1.controller;
+
+package GS2.controller;
 
 import java.util.List;
 
@@ -11,39 +12,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import GS1.model.Sistema;
-import GS1.service.SistemaService;
+import GS2.model.BasePublica;
+import GS2.service.BasePublicaService;
 
 @RestController
-@RequestMapping("/sistemas")
-public class SistemaController {
+@RequestMapping("/bases-publicas")
+public class BasePublicaController {
 
-    private final SistemaService service;
+    private final BasePublicaService service;
 
-    public SistemaController(SistemaService service) {
+    public BasePublicaController(BasePublicaService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<Sistema> listar() {
+    public List<BasePublica> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public Sistema buscarPorId(@PathVariable Long id) {
+    public BasePublica buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id);
     }
 
     @PostMapping
-    public Sistema salvar(@RequestBody Sistema sistema) {
-        return service.salvar(sistema);
+    public BasePublica salvar(@RequestBody BasePublica basePublica) {
+        return service.salvar(basePublica);
     }
 
     @PutMapping("/{id}")
-    public Sistema atualizar(@PathVariable Long id,
-                             @RequestBody Sistema sistema) {
+    public BasePublica atualizar(@PathVariable Long id,
+            @RequestBody BasePublica basePublica) {
 
-        return service.atualizar(id, sistema);
+        return service.atualizar(id, basePublica);
     }
 
     @DeleteMapping("/{id}")

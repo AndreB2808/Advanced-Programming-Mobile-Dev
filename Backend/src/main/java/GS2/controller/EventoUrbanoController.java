@@ -1,4 +1,5 @@
-package GS1.controller;
+
+package GS2.controller;
 
 import java.util.List;
 
@@ -11,39 +12,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import GS1.model.Alerta;
-import GS1.service.AlertaService;
+import GS2.model.EventoUrbano;
+import GS2.service.EventoUrbanoService;
 
 @RestController
-@RequestMapping("/alertas")
-public class AlertaController {
+@RequestMapping("/eventos-urbanos")
+public class EventoUrbanoController {
 
-    private final AlertaService service;
+    private final EventoUrbanoService service;
 
-    public AlertaController(AlertaService service) {
+    public EventoUrbanoController(EventoUrbanoService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<Alerta> listar() {
+    public List<EventoUrbano> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public Alerta buscarPorId(@PathVariable Long id) {
+    public EventoUrbano buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id);
     }
 
     @PostMapping
-    public Alerta salvar(@RequestBody Alerta alerta) {
-        return service.salvar(alerta);
+    public EventoUrbano salvar(@RequestBody EventoUrbano eventoUrbano) {
+        return service.salvar(eventoUrbano);
     }
 
     @PutMapping("/{id}")
-    public Alerta atualizar(@PathVariable Long id,
-                            @RequestBody Alerta alerta) {
+    public EventoUrbano atualizar(@PathVariable Long id,
+            @RequestBody EventoUrbano eventoUrbano) {
 
-        return service.atualizar(id, alerta);
+        return service.atualizar(id, eventoUrbano);
     }
 
     @DeleteMapping("/{id}")

@@ -1,4 +1,5 @@
-package GS1.model;
+
+package GS2.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,8 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "sensores")
-public class Sensor {
+@Table(name = "sensores_urbanos")
+public class SensorUrbano {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,24 +17,25 @@ public class Sensor {
 
     private String nome;
     private String tipo;
-    private String status;
+    private String local;
     private Double leitura;
     private String unidade;
-    private String localizacao;
+    private Boolean ativo;
 
-    public Sensor() {
+    public SensorUrbano() {
     }
 
-    public Sensor(Long id, String nome, String tipo, String status,
-                  Double leitura, String unidade, String localizacao) {
+    public SensorUrbano(Long id, String nome, String tipo,
+            String local, Double leitura,
+            String unidade, Boolean ativo) {
 
         this.id = id;
         this.nome = nome;
         this.tipo = tipo;
-        this.status = status;
+        this.local = local;
         this.leitura = leitura;
         this.unidade = unidade;
-        this.localizacao = localizacao;
+        this.ativo = ativo;
     }
 
     public Long getId() {
@@ -48,8 +50,8 @@ public class Sensor {
         return tipo;
     }
 
-    public String getStatus() {
-        return status;
+    public String getLocal() {
+        return local;
     }
 
     public Double getLeitura() {
@@ -60,8 +62,8 @@ public class Sensor {
         return unidade;
     }
 
-    public String getLocalizacao() {
-        return localizacao;
+    public Boolean getAtivo() {
+        return ativo;
     }
 
     public void setId(Long id) {
@@ -76,8 +78,8 @@ public class Sensor {
         this.tipo = tipo;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setLocal(String local) {
+        this.local = local;
     }
 
     public void setLeitura(Double leitura) {
@@ -88,7 +90,7 @@ public class Sensor {
         this.unidade = unidade;
     }
 
-    public void setLocalizacao(String localizacao) {
-        this.localizacao = localizacao;
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }

@@ -1,4 +1,5 @@
-package GS1.controller;
+
+package GS2.controller;
 
 import java.util.List;
 
@@ -11,39 +12,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import GS1.model.Sensor;
-import GS1.service.SensorService;
+import GS2.model.SensorUrbano;
+import GS2.service.SensorUrbanoService;
 
 @RestController
-@RequestMapping("/sensores")
-public class SensorController {
+@RequestMapping("/sensores-urbanos")
+public class SensorUrbanoController {
 
-    private final SensorService service;
+    private final SensorUrbanoService service;
 
-    public SensorController(SensorService service) {
+    public SensorUrbanoController(SensorUrbanoService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<Sensor> listar() {
+    public List<SensorUrbano> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public Sensor buscarPorId(@PathVariable Long id) {
+    public SensorUrbano buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id);
     }
 
     @PostMapping
-    public Sensor salvar(@RequestBody Sensor sensor) {
-        return service.salvar(sensor);
+    public SensorUrbano salvar(@RequestBody SensorUrbano sensorUrbano) {
+        return service.salvar(sensorUrbano);
     }
 
     @PutMapping("/{id}")
-    public Sensor atualizar(@PathVariable Long id,
-                            @RequestBody Sensor sensor) {
+    public SensorUrbano atualizar(@PathVariable Long id,
+            @RequestBody SensorUrbano sensorUrbano) {
 
-        return service.atualizar(id, sensor);
+        return service.atualizar(id, sensorUrbano);
     }
 
     @DeleteMapping("/{id}")
