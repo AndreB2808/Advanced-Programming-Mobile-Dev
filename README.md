@@ -1,4 +1,4 @@
-# Global Solution - Space Connect 🚀
+# Global Solution - Citizen Tech 🏙
 
 ## 🖥️ Descrição
 A aplicação possui uma interface mobile/web em React Native com TypeScript integrada a uma API desenvolvida em Java com Spring Boot. O sistema permite o gerenciamento de informações operacionais de missões espaciais, incluindo sensores, sistemas monitorados e alertas críticos.
