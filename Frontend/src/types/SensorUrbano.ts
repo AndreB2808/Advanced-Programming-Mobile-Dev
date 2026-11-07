@@ -1,9 +1,9 @@
-export type Sensor = {
+export type SensorUrbano = {
   id: number;
   nome: string;
   tipo: string;
-  status: string;
+  local: string;
   leitura: number;
   unidade: string;
-  localizacao: string;
+  ativo: boolean;
 };
