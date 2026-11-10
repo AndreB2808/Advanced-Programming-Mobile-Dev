@@ -55,8 +55,9 @@ para abrir a aplicação no navegador. Por padrão, o Frontend estará disponív
 http://localhost:8081
 ```
 
-O Backend e o Frontend devem permanecer executados simultaneamente durante o uso da aplicação.
+O Backend e o Frontend devem permanecer executados simultaneamente durante o uso da aplicação, assim a imagem abaixo mostra como deve aparecer a página da aplicação:
 
+![A](images/Front1.png)
 
 ## 🗃️ Banco de Dados H2
 
@@ -119,7 +120,7 @@ A prioridade dos eventos urbanos é definida pelo arquivo `AnalisePrioridadeServ
 
 Quando o Backend é suspenso enquanto o Frontend continua em execução, é exibida a seguinte mensagem de erro:
 
-![A](images/Front1.png)
+![B](images/Front2.png)
 
 Com as duas aplicações funcionando simultaneamente, o Frontend deve:
 
