@@ -6,4 +6,5 @@ export type SensorUrbano = {
   leitura: number;
   unidade: string;
   ativo: boolean;
+  confianca: number | null;
 };

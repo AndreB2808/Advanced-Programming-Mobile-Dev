@@ -1,3 +1,4 @@
+
 package GS2.model;
 
 import jakarta.persistence.Entity;
@@ -5,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "eventos_urbanos")
@@ -20,7 +22,10 @@ public class EventoUrbano {
     private String local;
     private String dataHora;
     private Integer confianca;
+
+    @Transient
     private String prioridade;
+
     private Boolean resolvido;
 
     public EventoUrbano() {

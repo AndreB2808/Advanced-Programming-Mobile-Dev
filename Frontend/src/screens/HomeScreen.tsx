@@ -4,12 +4,14 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   ScrollView,
   ActivityIndicator,
   Modal,
   TouchableOpacity,
   useWindowDimensions,
+  Platform,
 } from "react-native";
 
 import {
@@ -28,6 +30,7 @@ import { BasePublica } from "../types/BasePublica";
 type Conexao = "carregando" | "online" | "offline";
 
 const INTERVALO = 3000;
+const COR_PRINCIPAL = "#01625A";
 
 function corPrioridade(prioridade: string) {
   switch (prioridade.toUpperCase()) {
@@ -46,18 +49,110 @@ function corPrioridade(prioridade: string) {
 
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
+
   const desktop = width >= 850;
   const duasColunas = width >= 600;
+  const compacto = width < 600;
 
   const [eventos, setEventos] = useState<EventoUrbano[]>([]);
   const [sensores, setSensores] = useState<SensorUrbano[]>([]);
   const [bases, setBases] = useState<BasePublica[]>([]);
   const [conexao, setConexao] = useState<Conexao>("carregando");
 
+  const [mostrarNotificacoes, setMostrarNotificacoes] = useState(
+    () =>
+      Platform.OS === "web" &&
+      typeof Notification !== "undefined" &&
+      Notification.permission !== "granted"
+  );
+
+  const [mensagemNotificacoes, setMensagemNotificacoes] =
+    useState("");
+
   const idsAnteriores = useRef<Upcheck | null>(null);
+  const idsConhecidos = useRef<Set<number> | null>(null);
+
   const conectado = useRef(false);
   const verificando = useRef(false);
   const montado = useRef(true);
+
+  const notificacoesAtivas = useRef(
+    Platform.OS === "web" &&
+    typeof Notification !== "undefined" &&
+    Notification.permission === "granted"
+  );
+
+  const enviarNotificacao = useCallback((evento: EventoUrbano) => {
+    if (
+      Platform.OS !== "web" ||
+      !notificacoesAtivas.current ||
+      typeof Notification === "undefined" ||
+      Notification.permission !== "granted"
+    ) {
+      return;
+    }
+
+    try {
+      new Notification("Novo evento urbano - Plataforma URI", {
+        body:
+          `${evento.titulo}\n` +
+          `${evento.local} | Prioridade: ${evento.prioridade}`,
+      });
+    } catch {
+      console.warn("Não foi possível exibir a notificação.");
+    }
+  }, []);
+
+  const ativarNotificacoes = async () => {
+    if (
+      Platform.OS !== "web" ||
+      typeof Notification === "undefined"
+    ) {
+      setMensagemNotificacoes(
+        "As notificações não são suportadas neste ambiente."
+      );
+      return;
+    }
+
+    if (
+      typeof window === "undefined" ||
+      !window.isSecureContext
+    ) {
+      setMensagemNotificacoes(
+        "As notificações exigem localhost ou uma conexão HTTPS."
+      );
+      return;
+    }
+
+    if (Notification.permission === "denied") {
+      setMensagemNotificacoes(
+        "As notificações estão bloqueadas nas configurações do site."
+      );
+      return;
+    }
+
+    try {
+      const permissao =
+        Notification.permission === "granted"
+          ? "granted"
+          : await Notification.requestPermission();
+
+      if (permissao === "granted") {
+        notificacoesAtivas.current = true;
+        setMostrarNotificacoes(false);
+        setMensagemNotificacoes("");
+      } else {
+        notificacoesAtivas.current = false;
+        setMensagemNotificacoes(
+          "A permissão não foi concedida."
+        );
+      }
+    } catch {
+      setMensagemNotificacoes(
+        "Não foi possível ativar as notificações."
+      );
+    }
+  };
 
   const atualizarDados = useCallback(async () => {
     if (verificando.current) return;
@@ -66,6 +161,16 @@ export default function HomeScreen() {
 
     try {
       const idsAtuais = await verificarUpcheck();
+
+      const novosIds = new Set(
+        idsConhecidos.current
+          ? idsAtuais.eventosUrbanos.filter(
+            (id) => !idsConhecidos.current!.has(id)
+          )
+          : []
+      );
+
+      let eventosParaNotificar: EventoUrbano[] = [];
 
       if (!conectado.current || !idsAnteriores.current) {
         const [novosEventos, novosSensores, novasBases] =
@@ -80,6 +185,8 @@ export default function HomeScreen() {
         setEventos(novosEventos);
         setSensores(novosSensores);
         setBases(novasBases);
+
+        eventosParaNotificar = novosEventos;
       } else {
         const anteriores = idsAnteriores.current;
         const consultas: Promise<void>[] = [];
@@ -88,11 +195,16 @@ export default function HomeScreen() {
           idsMudaram(
             anteriores.eventosUrbanos,
             idsAtuais.eventosUrbanos
-          )
+          ) ||
+          anteriores.assinaturas.eventosUrbanos !==
+          idsAtuais.assinaturas.eventosUrbanos
         ) {
           consultas.push(
             listarEventosUrbanos().then((dados) => {
-              if (montado.current) setEventos(dados);
+              if (montado.current) {
+                setEventos(dados);
+                eventosParaNotificar = dados;
+              }
             })
           );
         }
@@ -101,11 +213,15 @@ export default function HomeScreen() {
           idsMudaram(
             anteriores.sensoresUrbanos,
             idsAtuais.sensoresUrbanos
-          )
+          ) ||
+          anteriores.assinaturas.sensoresUrbanos !==
+          idsAtuais.assinaturas.sensoresUrbanos
         ) {
           consultas.push(
             listarSensoresUrbanos().then((dados) => {
-              if (montado.current) setSensores(dados);
+              if (montado.current) {
+                setSensores(dados);
+              }
             })
           );
         }
@@ -114,11 +230,15 @@ export default function HomeScreen() {
           idsMudaram(
             anteriores.basesPublicas,
             idsAtuais.basesPublicas
-          )
+          ) ||
+          anteriores.assinaturas.basesPublicas !==
+          idsAtuais.assinaturas.basesPublicas
         ) {
           consultas.push(
             listarBasesPublicas().then((dados) => {
-              if (montado.current) setBases(dados);
+              if (montado.current) {
+                setBases(dados);
+              }
             })
           );
         }
@@ -128,9 +248,20 @@ export default function HomeScreen() {
 
       if (!montado.current) return;
 
+      const eventosNovos = eventosParaNotificar.filter(
+        (evento) => novosIds.has(evento.id)
+      );
+
+      idsConhecidos.current = new Set(
+        idsAtuais.eventosUrbanos
+      );
+
       idsAnteriores.current = idsAtuais;
       conectado.current = true;
+
       setConexao("online");
+
+      eventosNovos.forEach(enviarNotificacao);
     } catch {
       if (!montado.current) return;
 
@@ -144,7 +275,7 @@ export default function HomeScreen() {
     } finally {
       verificando.current = false;
     }
-  }, []);
+  }, [enviarNotificacao]);
 
   useEffect(() => {
     montado.current = true;
@@ -172,7 +303,10 @@ export default function HomeScreen() {
       ]}
     >
       <View style={styles.cabecalhoPainel}>
-        <Text style={styles.tituloPainel}>Eventos Urbanos</Text>
+        <Text style={styles.tituloPainel}>
+          Eventos Urbanos
+        </Text>
+
         <Text style={styles.contador}>
           {online ? eventos.length : 0}
         </Text>
@@ -182,67 +316,83 @@ export default function HomeScreen() {
         Ocorrências e riscos registrados na cidade
       </Text>
 
-      {conexao === "carregando" && (
-        <ActivityIndicator
-          size="large"
-          color="#27C2EE"
-          style={styles.carregamento}
-        />
-      )}
+      <ScrollView
+        style={styles.conteudoRolavel}
+        contentContainerStyle={styles.conteudoRolavelInterno}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator
+      >
+        {conexao === "carregando" && (
+          <ActivityIndicator
+            size="large"
+            color={COR_PRINCIPAL}
+            style={styles.carregamento}
+          />
+        )}
 
-      {online && eventos.length === 0 && (
-        <Text style={styles.vazio}>Nenhum evento registrado.</Text>
-      )}
+        {online && eventos.length === 0 && (
+          <Text style={styles.vazio}>
+            Nenhum evento registrado.
+          </Text>
+        )}
 
-      {online && (
-        <View style={styles.listaEventos}>
-          {eventos.map((evento) => (
-            <View
-              key={evento.id}
-              style={[
-                styles.postit,
-                {
-                  width: duasColunas ? "48%" : "100%",
-                  backgroundColor: corPrioridade(evento.prioridade),
-                },
-              ]}
-            >
-              <Text style={styles.postitPrioridade}>
-                {evento.prioridade}
-              </Text>
-
-              <Text style={styles.postitTitulo}>
-                {evento.titulo}
-              </Text>
-
-              <Text style={styles.postitDescricao}>
-                {evento.descricao}
-              </Text>
-
-              <View style={styles.postitRodape}>
-                <Text style={styles.postitInformacao}>
-                  {evento.local}
+        {online && (
+          <View style={styles.listaEventos}>
+            {eventos.map((evento) => (
+              <View
+                key={evento.id}
+                style={[
+                  styles.postit,
+                  {
+                    width: duasColunas ? "48%" : "100%",
+                    backgroundColor: corPrioridade(
+                      evento.prioridade
+                    ),
+                  },
+                ]}
+              >
+                <Text style={styles.postitPrioridade}>
+                  {evento.prioridade}
                 </Text>
 
-                <Text style={styles.postitInformacao}>
-                  Confiança: {evento.confianca}%
+                <Text style={styles.postitTitulo}>
+                  {evento.titulo}
                 </Text>
 
-                <Text style={styles.postitStatus}>
-                  {evento.resolvido ? "Resolvido" : "Em andamento"}
+                <Text style={styles.postitDescricao}>
+                  {evento.descricao}
                 </Text>
+
+                <View style={styles.postitRodape}>
+                  <Text style={styles.postitInformacao}>
+                    {evento.local}
+                  </Text>
+
+                  <Text style={styles.postitInformacao}>
+                    Confiança: {evento.confianca}%
+                  </Text>
+
+                  <Text style={styles.postitStatus}>
+                    {evento.resolvido
+                      ? "Resolvido"
+                      : "Em andamento"}
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
-        </View>
-      )}
+            ))}
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 
   const painelSensores = (
     <View style={styles.painel}>
       <View style={styles.cabecalhoPainel}>
-        <Text style={styles.tituloPainel}>Sensores Urbanos</Text>
+        <Text style={styles.tituloPainel}>
+          Sensores Urbanos
+        </Text>
+
         <Text style={styles.contador}>
           {online ? sensores.length : 0}
         </Text>
@@ -252,46 +402,72 @@ export default function HomeScreen() {
         Monitoramento das condições ambientais
       </Text>
 
-      {online && sensores.length === 0 && (
-        <Text style={styles.vazio}>Nenhum sensor registrado.</Text>
-      )}
+      <ScrollView
+        style={styles.conteudoRolavel}
+        contentContainerStyle={styles.conteudoRolavelInterno}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator
+      >
+        {online && sensores.length === 0 && (
+          <Text style={styles.vazio}>
+            Nenhum sensor registrado.
+          </Text>
+        )}
 
-      {online &&
-        sensores.map((sensor) => (
-          <View key={sensor.id} style={styles.itemSecundario}>
-            <View style={styles.itemCabecalho}>
-              <Text style={styles.itemTitulo}>{sensor.nome}</Text>
+        {online &&
+          sensores.map((sensor) => (
+            <View
+              key={sensor.id}
+              style={styles.itemSecundario}
+            >
+              <View style={styles.itemCabecalho}>
+                <Text style={styles.itemTitulo}>
+                  {sensor.nome}
+                </Text>
 
-              <View
-                style={[
-                  styles.indicador,
-                  {
-                    backgroundColor: sensor.ativo
-                      ? "#48CF94"
-                      : "#F07575",
-                  },
-                ]}
-              />
+                <View
+                  style={[
+                    styles.indicador,
+                    {
+                      backgroundColor: sensor.ativo
+                        ? "#48CF94"
+                        : "#F07575",
+                    },
+                  ]}
+                />
+              </View>
+
+              <Text style={styles.itemDescricao}>
+                {sensor.tipo.replace(/_/g, " ")}
+              </Text>
+
+              <Text style={styles.itemLeitura}>
+                {sensor.leitura} {sensor.unidade}
+              </Text>
+
+              <Text style={styles.itemLocal}>
+                {sensor.local}
+              </Text>
+
+              <Text style={styles.itemDescricao}>
+                Confiança:{" "}
+                {sensor.confianca == null
+                  ? "Não informada"
+                  : `${sensor.confianca}%`}
+              </Text>
             </View>
-
-            <Text style={styles.itemDescricao}>
-              {sensor.tipo.replace(/_/g, " ")}
-            </Text>
-
-            <Text style={styles.itemLeitura}>
-              {sensor.leitura} {sensor.unidade}
-            </Text>
-
-            <Text style={styles.itemLocal}>{sensor.local}</Text>
-          </View>
-        ))}
+          ))}
+      </ScrollView>
     </View>
   );
 
   const painelBases = (
     <View style={styles.painel}>
       <View style={styles.cabecalhoPainel}>
-        <Text style={styles.tituloPainel}>Bases Públicas</Text>
+        <Text style={styles.tituloPainel}>
+          Bases Públicas
+        </Text>
+
         <Text style={styles.contador}>
           {online ? bases.length : 0}
         </Text>
@@ -301,36 +477,60 @@ export default function HomeScreen() {
         Informações disponibilizadas por órgãos públicos
       </Text>
 
-      {online && bases.length === 0 && (
-        <Text style={styles.vazio}>Nenhuma base registrada.</Text>
-      )}
+      <ScrollView
+        style={styles.conteudoRolavel}
+        contentContainerStyle={styles.conteudoRolavelInterno}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator
+      >
+        {online && bases.length === 0 && (
+          <Text style={styles.vazio}>
+            Nenhuma base registrada.
+          </Text>
+        )}
 
-      {online &&
-        bases.map((base) => (
-          <View key={base.id} style={styles.itemSecundario}>
-            <Text style={styles.itemTitulo}>{base.nome}</Text>
+        {online &&
+          bases.map((base) => (
+            <View
+              key={base.id}
+              style={styles.itemSecundario}
+            >
+              <Text style={styles.itemTitulo}>
+                {base.nome}
+              </Text>
 
-            <Text style={styles.itemDescricao}>
-              {base.orgaoResponsavel}
-            </Text>
+              <Text style={styles.itemDescricao}>
+                {base.orgaoResponsavel}
+              </Text>
 
-            <Text style={styles.itemLocal}>
-              {base.local} • Confiança: {base.confianca}%
-            </Text>
-          </View>
-        ))}
+              <Text style={styles.itemLocal}>
+                {base.local} • Confiança: {base.confianca}%
+              </Text>
+            </View>
+          ))}
+      </ScrollView>
     </View>
   );
 
   return (
     <View style={styles.tela}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={true}
+      <View
+        style={[
+          styles.container,
+          compacto && styles.containerCompacto,
+        ]}
       >
         <View style={styles.topo}>
-          <View>
-            <Text style={styles.titulo}>Plataforma URI</Text>
+          <View style={styles.identidade}>
+            <Image
+              source={require("../../assets/icon.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+
+            <Text style={styles.titulo}>
+              Plataforma URI
+            </Text>
 
             <Text style={styles.subtitulo}>
               Urban Risk Intelligence
@@ -338,26 +538,34 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.statusContainer}>
-            <View
-              style={[
-                styles.indicador,
-                {
-                  backgroundColor: online
-                    ? "#48CF94"
-                    : conexao === "offline"
-                      ? "#F07575"
-                      : "#F2C66D",
-                },
-              ]}
-            />
-
-            <Text style={styles.statusTexto}>
-              {online
-                ? "Conectado"
-                : conexao === "offline"
-                  ? "Desconectado"
-                  : "Conectando"}
+            <Text style={styles.textoAtualizacao}>
+              Atualização automática a cada 3 segundos
             </Text>
+
+            <View style={styles.separadorStatus} />
+
+            <View style={styles.estadoConexao}>
+              <View
+                style={[
+                  styles.indicador,
+                  {
+                    backgroundColor: online
+                      ? "#48CF94"
+                      : conexao === "offline"
+                        ? "#F07575"
+                        : "#F2C66D",
+                  },
+                ]}
+              />
+
+              <Text style={styles.statusTexto}>
+                {online
+                  ? "Conectado"
+                  : conexao === "offline"
+                    ? "Desconectado"
+                    : "Conectando"}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -369,21 +577,12 @@ export default function HomeScreen() {
         >
           {painelEventos}
 
-          <View
-            style={[
-              styles.colunaSecundaria,
-              desktop && styles.colunaDesktop,
-            ]}
-          >
+          <View style={styles.colunaSecundaria}>
             {painelSensores}
             {painelBases}
           </View>
         </View>
-
-        <Text style={styles.rodape}>
-          Atualização automática a cada 3 segundos
-        </Text>
-      </ScrollView>
+      </View>
 
       <Modal
         visible={conexao === "offline"}
@@ -393,7 +592,9 @@ export default function HomeScreen() {
       >
         <View style={styles.modalFundo}>
           <View style={styles.modalCaixa}>
-            <Text style={styles.modalIcone}>!</Text>
+            <Text style={styles.modalIcone}>
+              !
+            </Text>
 
             <Text style={styles.modalTitulo}>
               Sem conexão com o servidor
@@ -419,6 +620,66 @@ export default function HomeScreen() {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        visible={mostrarNotificacoes && online}
+        transparent
+        animationType="fade"
+        onRequestClose={() =>
+          setMostrarNotificacoes(false)
+        }
+      >
+        <View style={styles.modalFundo}>
+          <View style={styles.modalCaixa}>
+            <Text style={styles.modalIconeNotificacao}>
+              🔔
+            </Text>
+
+            <Text style={styles.modalTitulo}>
+              Ativar notificações?
+            </Text>
+
+            <Text style={styles.modalDescricao}>
+              Receba uma notificação no computador sempre
+              que um novo evento urbano for registrado
+              na Plataforma URI.
+            </Text>
+
+            {mensagemNotificacoes !== "" && (
+              <Text style={styles.mensagemNotificacoes}>
+                {mensagemNotificacoes}
+              </Text>
+            )}
+
+            <View style={styles.modalAcoes}>
+              <TouchableOpacity
+                style={styles.botaoSecundario}
+                onPress={() =>
+                  setMostrarNotificacoes(false)
+                }
+              >
+                <Text style={styles.botaoSecundarioTexto}>
+                  Agora não
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.modalBotao}
+                onPress={ativarNotificacoes}
+              >
+                <Text style={styles.modalBotaoTexto}>
+                  Ativar notificações
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.modalRodape}>
+              Os eventos já carregados não geram
+              notificações.
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -426,13 +687,21 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   tela: {
     flex: 1,
-    backgroundColor: "#080D14",
+    backgroundColor: "#08110F",
   },
 
   container: {
-    padding: 24,
-    paddingBottom: 35,
-    minHeight: "100%",
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 12,
+    minHeight: 0,
+  },
+
+  containerCompacto: {
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
 
   topo: {
@@ -440,8 +709,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     flexWrap: "wrap",
-    gap: 16,
-    marginBottom: 28,
+    gap: 12,
+    marginBottom: 10,
+    flexShrink: 0,
+  },
+
+  identidade: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 12,
+    flexShrink: 1,
+  },
+
+  logo: {
+    width: 34,
+    height: 34,
   },
 
   titulo: {
@@ -451,19 +734,39 @@ const styles = StyleSheet.create({
   },
 
   subtitulo: {
-    color: "#8292A5",
+    color: "#A0B3AD",
     fontSize: 13,
-    marginTop: 4,
+    marginTop: 0,
   },
 
   statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flexWrap: "wrap",
+    gap: 10,
+    flexShrink: 1,
+  },
+
+  textoAtualizacao: {
+    color: "#A0B3AD",
+    fontSize: 12,
+  },
+
+  separadorStatus: {
+    width: 1,
+    height: 14,
+    backgroundColor: "#2D4C45",
+  },
+
+  estadoConexao: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
 
   statusTexto: {
-    color: "#B2C0CD",
+    color: "#BFCBC7",
     fontSize: 13,
   },
 
@@ -474,40 +777,42 @@ const styles = StyleSheet.create({
   },
 
   layout: {
-    gap: 18,
+    flex: 1,
+    minHeight: 0,
+    gap: 14,
+    flexDirection: "column",
   },
 
   layoutDesktop: {
     flexDirection: "row-reverse",
-    alignItems: "flex-start",
+    alignItems: "stretch",
   },
 
   painel: {
-    backgroundColor: "#111B27",
+    flex: 1,
+    minHeight: 0,
+    backgroundColor: "#101F1D",
     borderWidth: 1,
-    borderColor: "#263B4D",
+    borderColor: "#23423C",
     borderTopWidth: 4,
-    borderTopColor: "#27C2EE",
+    borderTopColor: COR_PRINCIPAL,
     borderRadius: 10,
-    padding: 18,
-    minHeight: 230,
+    padding: 14,
+    overflow: "hidden",
   },
 
   painelEventos: {
-    minHeight: 420,
+    flex: 1.5,
   },
 
   painelEventosDesktop: {
     flex: 1.8,
-    minHeight: 630,
   },
 
   colunaSecundaria: {
-    gap: 18,
-  },
-
-  colunaDesktop: {
     flex: 1,
+    minHeight: 0,
+    gap: 14,
   },
 
   cabecalhoPainel: {
@@ -515,6 +820,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
+    flexShrink: 0,
   },
 
   tituloPainel: {
@@ -525,8 +831,8 @@ const styles = StyleSheet.create({
   },
 
   contador: {
-    color: "#65D4F6",
-    backgroundColor: "#203443",
+    color: "#FFFFFF",
+    backgroundColor: COR_PRINCIPAL,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 6,
@@ -535,20 +841,30 @@ const styles = StyleSheet.create({
   },
 
   descricaoPainel: {
-    color: "#8294A7",
+    color: "#A4B8B1",
     fontSize: 12,
     marginTop: 6,
-    marginBottom: 18,
+    marginBottom: 12,
+    flexShrink: 0,
+  },
+
+  conteudoRolavel: {
+    flex: 1,
+    minHeight: 0,
+  },
+
+  conteudoRolavelInterno: {
+    paddingBottom: 6,
   },
 
   carregamento: {
-    marginTop: 70,
+    marginTop: 30,
   },
 
   vazio: {
-    color: "#7D8D9F",
+    color: "#91A79E",
     fontSize: 13,
-    marginTop: 20,
+    marginTop: 12,
     textAlign: "center",
   },
 
@@ -606,10 +922,10 @@ const styles = StyleSheet.create({
   },
 
   itemSecundario: {
-    backgroundColor: "#1B2938",
+    backgroundColor: "#1B2E2A",
     borderRadius: 7,
     borderWidth: 1,
-    borderColor: "#2D4255",
+    borderColor: "#2F4B44",
     padding: 13,
     marginBottom: 10,
     gap: 5,
@@ -630,27 +946,20 @@ const styles = StyleSheet.create({
   },
 
   itemDescricao: {
-    color: "#9FAFC0",
+    color: "#B1C2BB",
     fontSize: 12,
   },
 
   itemLeitura: {
-    color: "#65D4F6",
+    color: "#8FD7C7",
     fontSize: 21,
     fontWeight: "700",
     marginTop: 4,
   },
 
   itemLocal: {
-    color: "#899BAC",
+    color: "#9DB8AF",
     fontSize: 12,
-  },
-
-  rodape: {
-    color: "#617487",
-    fontSize: 11,
-    textAlign: "center",
-    marginTop: 24,
   },
 
   modalFundo: {
@@ -664,10 +973,10 @@ const styles = StyleSheet.create({
   modalCaixa: {
     width: "100%",
     maxWidth: 410,
-    backgroundColor: "#172230",
+    backgroundColor: "#162722",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#324659",
+    borderColor: "#325349",
     padding: 28,
     alignItems: "center",
   },
@@ -679,6 +988,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
+  modalIconeNotificacao: {
+    fontSize: 32,
+    marginBottom: 14,
+  },
+
   modalTitulo: {
     color: "#FFFFFF",
     fontSize: 19,
@@ -688,7 +1002,7 @@ const styles = StyleSheet.create({
   },
 
   modalDescricao: {
-    color: "#B7C4D0",
+    color: "#C0CEC8",
     fontSize: 14,
     lineHeight: 21,
     textAlign: "center",
@@ -696,9 +1010,9 @@ const styles = StyleSheet.create({
   },
 
   modalBotao: {
-    backgroundColor: "#21A8D3",
+    backgroundColor: COR_PRINCIPAL,
     borderRadius: 7,
-    paddingHorizontal: 30,
+    paddingHorizontal: 22,
     paddingVertical: 13,
   },
 
@@ -706,12 +1020,43 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "700",
     fontSize: 14,
+    textAlign: "center",
   },
 
   modalRodape: {
-    color: "#7E91A5",
+    color: "#96ADA4",
     fontSize: 11,
     textAlign: "center",
     marginTop: 18,
+  },
+
+  modalAcoes: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+
+  botaoSecundario: {
+    borderWidth: 1,
+    borderColor: "#425F55",
+    borderRadius: 7,
+    paddingHorizontal: 18,
+    paddingVertical: 13,
+  },
+
+  botaoSecundarioTexto: {
+    color: "#C0CEC8",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
+  mensagemNotificacoes: {
+    color: "#F2C66D",
+    textAlign: "center",
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 16,
   },
 });

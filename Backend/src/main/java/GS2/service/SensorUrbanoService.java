@@ -40,12 +40,12 @@ public class SensorUrbanoService {
         sensorExistente.setLeitura(sensorAtualizado.getLeitura());
         sensorExistente.setUnidade(sensorAtualizado.getUnidade());
         sensorExistente.setAtivo(sensorAtualizado.getAtivo());
+        sensorExistente.setConfianca(sensorAtualizado.getConfianca());
 
         return repository.save(sensorExistente);
     }
 
     public void deletar(Long id) {
-        SensorUrbano sensorUrbano = buscarPorId(id);
-        repository.delete(sensorUrbano);
+        repository.delete(buscarPorId(id));
     }
 }

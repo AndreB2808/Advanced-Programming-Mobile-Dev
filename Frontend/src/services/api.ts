@@ -1,4 +1,3 @@
-
 import { Platform } from "react-native";
 
 import { EventoUrbano } from "../types/EventoUrbano";
@@ -14,6 +13,12 @@ export type Upcheck = {
   eventosUrbanos: number[];
   sensoresUrbanos: number[];
   basesPublicas: number[];
+
+  assinaturas: {
+    eventosUrbanos: string;
+    sensoresUrbanos: string;
+    basesPublicas: string;
+  };
 };
 
 async function buscarDados<T>(endpoint: string): Promise<T> {
@@ -61,5 +66,7 @@ export function idsMudaram(
     return true;
   }
 
-  return idsAnteriores.some((id, index) => id !== idsAtuais[index]);
+  return idsAnteriores.some(
+    (id, index) => id !== idsAtuais[index]
+  );
 }

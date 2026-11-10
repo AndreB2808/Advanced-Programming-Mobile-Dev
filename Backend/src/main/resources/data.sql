@@ -8,10 +8,9 @@ INSERT INTO
         local,
         data_hora,
         confianca,
-        prioridade,
         resolvido
     )
-SELECT 'Alagamento na Avenida Paulista', 'Acumulo de agua prejudicando o transito', 'ALAGAMENTO', 'Bela Vista', '2026-11-06 14:30', 95, 'ALTA', FALSE
+SELECT 'Interrupcao de energia em Pinheiros', 'Falha temporaria no fornecimento eletrico', 'ENERGIA', 'Pinheiros', '2026-11-06 10:15', 92, TRUE
 WHERE
     NOT EXISTS (
         SELECT 1
@@ -23,7 +22,7 @@ WHERE
         SELECT 1
         FROM eventos_urbanos
         WHERE
-            titulo = 'Alagamento na Avenida Paulista'
+            titulo = 'Interrupcao de energia em Pinheiros'
     );
 
 INSERT INTO
@@ -34,10 +33,9 @@ INSERT INTO
         local,
         data_hora,
         confianca,
-        prioridade,
         resolvido
     )
-SELECT 'Calor intenso na Vila Mariana', 'Temperaturas elevadas durante a tarde', 'CALOR', 'Vila Mariana', '2026-11-06 13:00', 88, 'MEDIA', FALSE
+SELECT 'Calor intenso na Vila Mariana', 'Temperaturas elevadas durante a tarde', 'CALOR', 'Vila Mariana', '2026-11-06 13:00', 88, FALSE
 WHERE
     NOT EXISTS (
         SELECT 1
@@ -60,10 +58,9 @@ INSERT INTO
         local,
         data_hora,
         confianca,
-        prioridade,
         resolvido
     )
-SELECT 'Interrupcao de energia em Pinheiros', 'Falha temporaria no fornecimento eletrico', 'ENERGIA', 'Pinheiros', '2026-11-06 10:15', 92, 'BAIXA', TRUE
+SELECT 'Alagamento na Avenida Paulista', 'Acumulo de agua prejudicando o transito', 'ALAGAMENTO', 'Bela Vista', '2026-11-06 14:30', 95, FALSE
 WHERE
     NOT EXISTS (
         SELECT 1
@@ -75,7 +72,7 @@ WHERE
         SELECT 1
         FROM eventos_urbanos
         WHERE
-            titulo = 'Interrupcao de energia em Pinheiros'
+            titulo = 'Alagamento na Avenida Paulista'
     );
 
 INSERT INTO
@@ -85,9 +82,10 @@ INSERT INTO
         local,
         leitura,
         unidade,
-        ativo
+        ativo,
+        confianca
     )
-SELECT 'Termometro Central', 'TEMPERATURA', 'Centro', 39.5, 'C', TRUE
+SELECT 'Termometro Central', 'TEMPERATURA', 'Centro', 39.5, 'C', TRUE, 96
 WHERE
     NOT EXISTS (
         SELECT 1
@@ -109,9 +107,10 @@ INSERT INTO
         local,
         leitura,
         unidade,
-        ativo
+        ativo,
+        confianca
     )
-SELECT 'Sensor de Umidade', 'UMIDADE', 'Vila Mariana', 45.0, '%', TRUE
+SELECT 'Sensor de Umidade', 'UMIDADE', 'Vila Mariana', 45.0, '%', TRUE, 90
 WHERE
     NOT EXISTS (
         SELECT 1
@@ -133,9 +132,10 @@ INSERT INTO
         local,
         leitura,
         unidade,
-        ativo
+        ativo,
+        confianca
     )
-SELECT 'Anemometro Norte', 'VELOCIDADE_VENTO', 'Santana', 62.0, 'km/h', TRUE
+SELECT 'Anemometro Norte', 'VELOCIDADE_VENTO', 'Santana', 62.0, 'km/h', TRUE, 93
 WHERE
     NOT EXISTS (
         SELECT 1
@@ -237,4 +237,40 @@ WHERE
         FROM gs2_inicializacao
         WHERE
             id = 1
+    );
+
+INSERT INTO
+    eventos_urbanos (
+        titulo,
+        descricao,
+        tipo,
+        local,
+        data_hora,
+        confianca,
+        resolvido
+    )
+SELECT 'Incêndio em edifício comercial', 'Incêndio de grandes proporções em edifício comercial, com evacuação em andamento e risco de propagação.', 'INCENDIO', 'Santa Ifigênia', '2026-11-05 16:12', 99, FALSE
+WHERE
+    NOT EXISTS (
+        SELECT 1
+        FROM gs2_inicializacao
+        WHERE
+            id = 2
+    )
+    AND NOT EXISTS (
+        SELECT 1
+        FROM eventos_urbanos
+        WHERE
+            titulo = 'Incêndio em edifício comercial'
+    );
+
+INSERT INTO
+    gs2_inicializacao (id)
+SELECT 2
+WHERE
+    NOT EXISTS (
+        SELECT 1
+        FROM gs2_inicializacao
+        WHERE
+            id = 2
     );

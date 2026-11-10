@@ -1,7 +1,5 @@
-
 package GS2.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +12,14 @@ import GS2.service.UpcheckService;
 @RequestMapping("/upcheck")
 public class Upcheck {
 
-    private final UpcheckService service;
+        private final UpcheckService service;
 
-    public Upcheck(UpcheckService service) {
-        this.service = service;
-    }
+        public Upcheck(UpcheckService service) {
+                this.service = service;
+        }
 
-    @GetMapping
-    public Map<String, List<Long>> listarIds() {
-        return service.listarIds();
-    }
+        @GetMapping
+        public Map<String, Object> listarIds() {
+                return service.listarIds();
+        }
 }

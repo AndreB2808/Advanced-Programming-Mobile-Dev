@@ -21,13 +21,15 @@ public class SensorUrbano {
     private Double leitura;
     private String unidade;
     private Boolean ativo;
+    private Integer confianca;
 
     public SensorUrbano() {
     }
 
     public SensorUrbano(Long id, String nome, String tipo,
             String local, Double leitura,
-            String unidade, Boolean ativo) {
+            String unidade, Boolean ativo,
+            Integer confianca) {
 
         this.id = id;
         this.nome = nome;
@@ -36,6 +38,7 @@ public class SensorUrbano {
         this.leitura = leitura;
         this.unidade = unidade;
         this.ativo = ativo;
+        this.confianca = confianca;
     }
 
     public Long getId() {
@@ -66,6 +69,10 @@ public class SensorUrbano {
         return ativo;
     }
 
+    public Integer getConfianca() {
+        return confianca;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -92,5 +99,9 @@ public class SensorUrbano {
 
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public void setConfianca(Integer confianca) {
+        this.confianca = confianca;
     }
 }
