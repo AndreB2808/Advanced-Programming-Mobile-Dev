@@ -29,7 +29,6 @@ Frontend/yarn-debug.*
 Frontend/yarn-error.*
 
 
-
 # local env files
 Frontend/.env*.local
 
