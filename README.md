@@ -40,7 +40,7 @@ Para utilizar a integração completa, o Frontend tabém deve estar em execuçã
 
 ```bash
 npm install
-npm expo start
+npm start
 ```
 
 Após iniciar o Expo, pressione:
@@ -190,3 +190,6 @@ Advanced-Programming-Mobile-Dev/
 ```
 
 ## 🎥 Vídeo demonstrativo
+
+https://youtu.be/B3JWi5zaM6g
+
